@@ -77,12 +77,12 @@ useEffect(() => {
 
 
   return (
-    <div
-className={`${parentClass} ${gridClass} ${
+<div
+  className={`${parentClass} equal-product-card ${gridClass} ${
     product.isOnSale ? "on-sale" : ""
   } ${product.sizes ? "card-product-size" : ""}`}
   suppressHydrationWarning
-    >
+>
       <div
         className={`card-product-wrapper ${
           isNotImageRatio ? "aspect-ratio-0" : ""

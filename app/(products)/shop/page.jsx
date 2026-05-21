@@ -10,7 +10,8 @@ export const metadata = {
 };
 export default async function ShopDefaultGridPage({ searchParams }) {
 
-  const search =  await searchParams?.search || "";
+  const params = await searchParams;
+  const search = params?.search || "";
 
   return (
     <>

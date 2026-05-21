@@ -206,33 +206,91 @@ export default function ProductsContent({
 
   const { data: wishlist = [] } = useWishlist();
 
+const getProductSortPrice = (product) => {
+  const combinationPrices =
+    product.variant_combinations
+      ?.map((combo) =>
+        Number(combo.final_price || combo.sale_price || combo.price || 0)
+      )
+      .filter((price) => price > 0) || [];
+
+  if (combinationPrices.length > 0) {
+    return Math.min(...combinationPrices);
+  }
+
+  return Number(product.price || 0);
+};
+
+const getProductTitle = (product) => {
+  return String(product.title || product.name || "").toLowerCase();
+};
+
   const sortedProducts = useMemo(() => {
     const list = [...filteredProducts];
 
-    switch (sortingOption) {
-      case "Price Ascending":
-        return list.sort(
-          (a, b) => getProductDisplayPrice(a) - getProductDisplayPrice(b)
-        );
+    const option = String(sortingOption || "").toLowerCase();
 
-      case "Price Descending":
-        return list.sort(
-          (a, b) => getProductDisplayPrice(b) - getProductDisplayPrice(a)
-        );
-
-      case "Title Ascending":
-        return list.sort((a, b) =>
-          (a.title || a.name || "").localeCompare(b.title || b.name || "")
-        );
-
-      case "Title Descending":
-        return list.sort((a, b) =>
-          (b.title || b.name || "").localeCompare(a.title || a.name || "")
-        );
-
-      default:
-        return list;
+    if (
+      option.includes("price ascending") ||
+      option.includes("price low") ||
+      option.includes("low to high") ||
+      option.includes("price: low")
+    ) {
+      return list.sort(
+        (a, b) => getProductSortPrice(a) - getProductSortPrice(b)
+      );
     }
+
+    if (
+      option.includes("price descending") ||
+      option.includes("price high") ||
+      option.includes("high to low") ||
+      option.includes("price: high")
+    ) {
+      return list.sort(
+        (a, b) => getProductSortPrice(b) - getProductSortPrice(a)
+      );
+    }
+
+    if (
+      option.includes("title ascending") ||
+      option.includes("alphabetically a-z") ||
+      option.includes("a-z")
+    ) {
+      return list.sort((a, b) =>
+        getProductTitle(a).localeCompare(getProductTitle(b), undefined, {
+          numeric: true,
+          sensitivity: "base",
+        })
+      );
+    }
+
+    if (
+      option.includes("title descending") ||
+      option.includes("alphabetically z-a") ||
+      option.includes("z-a")
+    ) {
+      return list.sort((a, b) =>
+        getProductTitle(b).localeCompare(getProductTitle(a), undefined, {
+          numeric: true,
+          sensitivity: "base",
+        })
+      );
+    }
+
+    if (
+      option.includes("newest") ||
+      option.includes("latest") ||
+      option.includes("date")
+    ) {
+      return list.sort(
+        (a, b) =>
+          new Date(b.created_at || 0).getTime() -
+          new Date(a.created_at || 0).getTime()
+      );
+    }
+
+    return list;
   }, [filteredProducts, sortingOption]);
 
   if (isLoading) {

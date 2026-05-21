@@ -182,3 +182,140 @@
   font-size: 15px;
   line-height: 1.6;
 }
+
+/* Equal product cards */
+.equal-product-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.equal-product-card .card-product-wrapper {
+  height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f7f7f7;
+  overflow: hidden;
+}
+
+.equal-product-card .card-product-wrapper .product-img {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.equal-product-card .card-product-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.equal-product-card .card-product-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.equal-product-card .card-product-info .title {
+  min-height: 52px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.equal-product-card .price {
+  margin-top: auto;
+}
+
+.equal-product-card .list-color-product {
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+
+
+@media (max-width: 575px) {
+  .tf-grid-layout.wrapper-shop {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 16px !important;
+  }
+
+  .tf-grid-layout.wrapper-shop .card-product {
+    width: 100% !important;
+  }
+
+  .tf-grid-layout.wrapper-shop .card-product-wrapper {
+    height: 210px !important;
+  }
+
+  .tf-grid-layout.wrapper-shop .card-product-wrapper .product-img {
+    width: 100%;
+    height: 100%;
+  }
+
+  .tf-grid-layout.wrapper-shop .card-product-wrapper img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+  }
+
+  .tf-grid-layout.wrapper-shop .card-product-info .title {
+    font-size: 16px !important;
+    line-height: 1.3 !important;
+    min-height: 42px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .tf-grid-layout.wrapper-shop .price {
+    font-size: 15px !important;
+  }
+
+  .tf-grid-layout.wrapper-shop .list-color-product {
+    min-height: 28px;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 575px) {
+
+
+  .equal-product-card .card-product-wrapper {
+    height: 300px;
+  }
+
+  .equal-product-card .card-product-info .title {
+    min-height: 50px;
+    font-size: 18px;
+    line-height: 1.35;
+  }
+}
+
+.tf-select-sort {
+  height: 44px;
+  min-width: 180px;
+  padding: 8px 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+@media (max-width: 575px) {
+  .tf-select-sort {
+    min-width: 155px;
+    max-width: 155px;
+    font-size: 14px;
+  }
+}
