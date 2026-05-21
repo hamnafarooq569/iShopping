@@ -1,0 +1,169 @@
+"use client";
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import CountdownTimer from "../common/Countdown";
+
+import { useContextElement } from "@/context/Context";
+import { useAddWishlist, useRemoveWishlist, useWishlist } from "@/app/hooks/useWishList";
+import { formatPrice } from "@/utlis/PriceFormat";
+
+export default function ProductsCards6({ product,isInWishlist = false }) {
+  const [currentImage, setCurrentImage] = useState(product.imgSrc);
+ 
+const add = useAddWishlist();
+const remove = useRemoveWishlist();
+const { data: wishlist } = useWishlist();
+const [wishListLoading,setWishListLoading] = useState(false);
+  const {
+    setQuickAddItem,
+    addToCompareItem,
+    isAddedtoCompareItem,
+    setQuickViewItem,
+    addProductToCart,
+    isAddedToCartProducts,
+  } = useContextElement();
+
+  useEffect(() => {
+    setCurrentImage(product.imgSrc);
+  }, [product]);
+  return (
+    <div
+      className="card-product style-list"
+      data-availability="In stock"
+      data-brand="gucci"
+    >
+      <div className="card-product-wrapper">
+        <Link href={`/product-detail/${product.slug}`} className="product-img">
+          <Image
+            className="lazyload img-product"
+            src={currentImage}
+            alt={product.title}
+            width={600}
+            height={800}
+          />
+          <Image
+            className="lazyload img-hover"
+            src={product.imgHover}
+            alt={product.title}
+            width={600}
+            height={800}
+          />
+        </Link>
+        {product.isOnSale && (
+          <div className="on-sale-wrap">
+            <span className="on-sale-item">-25%</span>
+          </div>
+        )}
+      </div>
+      <div className="card-product-info">
+        <Link href={`/product-detail/${product.slug}`} className="title link">
+          {product.title}
+        </Link>
+        <span className="price current-price">
+          {product.oldPrice && (
+            <span className="old-price">{formatPrice(product.oldPrice.toFixed(2))}</span>
+          )}{" "}
+          {formatPrice(product.price?.toFixed(2))}
+        </span>
+        <p className="description text-secondary text-line-clamp-2">
+          
+          {product.description}
+          </p>
+        <div className="variant-wrap-list">
+          {product.colors && (
+            <ul className="list-color-product">
+              {product.colors.map((color, index) => (
+                <li
+                  key={index}
+                  className={`list-color-item color-swatch ${
+                    currentImage == color.imgSrc ? "active" : ""
+                  } `}
+                  onMouseOver={() => setCurrentImage(color.imgSrc)}
+                >
+                  <span className={`swatch-value ${color.bgColor}`} />
+                  <Image
+                    className="lazyload"
+                    src={color.imgSrc}
+                    alt="color variant"
+                    width={600}
+                    height={800}
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
+          {product.sizes && (
+            <div className="size-box list-product-btn">
+              <span className="size-item box-icon">S</span>
+              <span className="size-item box-icon">M</span>
+              <span className="size-item box-icon">L</span>
+              <span className="size-item box-icon">XL</span>
+              <span className="size-item box-icon disable">XXL</span>
+            </div>
+          )}
+          <div className="list-product-btn">
+            <a
+              onClick={() => addProductToCart(product)}
+              className="btn-main-product"
+            >
+              {isAddedToCartProducts(product.id)
+                ? "Already Added"
+                : "Add To cart"}
+            </a>
+     <a
+  onClick={() => {
+    if (wishListLoading) return;
+
+    setWishListLoading(true);
+
+    const action = isInWishlist ? remove : add;
+
+    action.mutate(product.id, {
+      onSettled: () => {
+        setWishListLoading(false);
+      },
+    });
+  }}
+  className="box-icon wishlist btn-icon-action"
+>
+  <span className="icon icon-heart" />
+
+  <span className="tooltip">
+    {wishListLoading
+      ? "..."
+      : isInWishlist
+      ? "Remove from wishlist"
+      : "Add to wishlist"}
+  </span>
+</a>
+            {/* <a
+              href="#compare"
+              data-bs-toggle="offcanvas"
+              aria-controls="compare"
+              onClick={() => addToCompareItem(product.id)}
+              className="box-icon compare btn-icon-action"
+            >
+              <span className="icon icon-gitDiff" />
+              <span className="tooltip">
+                {" "}
+                {isAddedtoCompareItem(product.id)
+                  ? "Already compared"
+                  : "Compare"}
+              </span>
+            </a> */}
+            <a
+              href="#quickView"
+              onClick={() => setQuickViewItem(product)}
+              data-bs-toggle="modal"
+              className="box-icon quickview tf-btn-loading"
+            >
+              <span className="icon icon-eye" />
+              <span className="tooltip">Quick View</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

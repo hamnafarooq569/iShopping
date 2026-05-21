@@ -1,0 +1,83 @@
+/* ---------------------------------------------------------
+    * Name: Modave - Multipurpose eCommerce
+    * Version: 1.0.2
+    * Author: Themesflat
+    * Author URI: http://themesflat.com 
+
+	* Abstracts variable
+    
+    * Reset css styles
+
+    * Components
+
+        * header
+        * footer
+        * tabs
+        * slider banner
+        * button
+        * form
+        * nice select
+        * carousel
+        * avatar
+        * pop up
+        * box icon
+        * hover
+        * collection
+        * product
+        * blog
+        * testimonial
+        * lookbook
+        * accordion
+        * zoom
+        * shop
+        
+    * section
+
+    * Responsive
+ ------------------------------------------------------------------------------ */
+
+/*--------- Abstracts variable ---------- */
+@use "abstracts/index";
+
+/*---------- Reset css styles ----------- */
+@use "reset";
+
+/*------------ Components ---------------- */
+@use "component/index" as index2;
+
+/*------------ sections ---------------- */
+@use "sections";
+
+/*-------------- Responsive ----------------- */
+@use "responsive";
+
+/*-------------- RTL ----------------- */
+@use "rtl";
+
+@use "custom.scss";
+
+
+.wishlist-login-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 106px;
+  height: 48px;
+  padding: 10px 32px;
+  border-radius: 99px;
+  background-color: #111;
+  color: #fff !important;
+  font-size: 16px;
+  line-height: 26px;
+  font-weight: 600;
+  text-transform: capitalize;
+  border: 1px solid #111;
+  transition: all 0.3s ease;
+  text-decoration: none !important;
+}
+
+.wishlist-login-button:hover {
+  background-color: #fff;
+  color: #000 !important;
+  border-color: #111;
+}

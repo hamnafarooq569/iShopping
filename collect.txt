@@ -1,0 +1,99 @@
+"use client";
+
+import React from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { useCategories } from "@/app/hooks/useCategories";
+
+export default function Collections() {
+  const { isLoading, data, error } = useCategories();
+
+  if (isLoading) return null;
+  if (error) return null;
+
+  const categories = data?.slice(0, 3) || [];
+
+  const layouts = [
+    {
+      type: "small",
+      titleClass: "font-5",
+      imgClass: "bg-gray",
+    },
+    {
+      type: "small",
+      titleClass: "font-5",
+      imgClass: "bg-dark",
+    },
+    {
+      type: "large",
+      titleClass: "font-5",
+      imgClass: "",
+    },
+  ];
+
+  return (
+    <section className="flat-spacing">
+      <div className="container">
+        <div className="tf-grid-layout md-col-2">
+          {categories.map((cat, index) => {
+            const layout = layouts[index];
+
+            return (
+              <div
+                key={cat.id}
+                className={`collection-default abs-left-bottom type-xl radius-20 hover-img wow fadeInUp ${
+                  index === 2 ? "wd-load abs-left-center" : ""
+                }`}
+              >
+                <Link href={`/shop/${cat.slug}`} className="img-style">
+                  <Image
+                    src={cat.image_url}
+                    alt={cat.name}
+                    width={index === 2 ? 1290 : 630}
+                    height={index === 2 ? 500 : 630}
+                    className={`lazyload ${layout.imgClass}`}
+                  />
+                </Link>
+
+                <div className="content text-start">
+                  <div className="box-title">
+                    <p className="tag text-btn-uppercase text-white">
+                      {cat.name}
+                    </p>
+
+                    <h3 className="title">
+                      <Link
+                        href={`/shop/${cat.slug}`}
+                        className={`link text-white fw-bold ${layout.titleClass}`}
+                      >
+                        {cat.name} <br /> Collection
+                      </Link>
+                    </h3>
+
+                    <p className="text-white body-text-1">
+                      Explore premium {cat.name.toLowerCase()} products.
+                    </p>
+                  </div>
+
+                  <div className="box-btn">
+                    <Link
+                      href={`/shop/${cat.slug}`}
+                      className={
+                        index === 2
+                          ? "tf-btn btn-fill btn-white btn-md"
+                          : "btn-line style-white has-icon"
+                      }
+                    >
+                      Shop Now
+                      <i className="icon icon-arrowUpRight" />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
