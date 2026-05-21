@@ -283,7 +283,16 @@ className={`${parentClass} ${gridClass} ${
           </a>
         </div>
         <div className="list-btn-main">
-          {product.addToCart == "Quick Add" ? (
+          {product.variant_combinations?.length > 0 ? (
+            <a
+              href="#quickView"
+              className="btn-main-product"
+              data-bs-toggle="modal"
+              onClick={() => setQuickViewItem(product)}
+            >
+              SELECT OPTIONS
+            </a>
+          ) : product.addToCart == "Quick Add" ? (
             <a
               className="btn-main-product"
               href="#quickAdd"

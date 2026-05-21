@@ -135,6 +135,11 @@ export default function Context({ children }) {
       });
     }
 
+    if (product.variant_combinations?.length && !matchedCombination) {
+      alert("Please select product options first.");
+      return;
+    }
+
     const finalPrice = normalizePrice(
       matchedCombination?.final_price ||
         matchedCombination?.sale_price ||

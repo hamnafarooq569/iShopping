@@ -19,18 +19,15 @@ export default function Details1({ product, selectedVariantId = null }) {
 
   const {
     addProductToCart,
-    isAddedToCartProducts,
     addToWishlist,
     isAddedtoWishlist,
-    isAddedtoCompareItem,
-    addToCompareItem,
     cartProducts,
     updateQuantity,
   } = useContextElement();
 
   const variants =
-    product.variant_groups?.flatMap((group) =>
-      group.options.map((option) => ({
+    product?.variant_groups?.flatMap((group) =>
+      (group.options || []).map((option) => ({
         group_name: group.group_name,
         ...option,
       }))
@@ -40,18 +37,21 @@ export default function Details1({ product, selectedVariantId = null }) {
     (variant) => variant.group_name?.toLowerCase() === "color"
   );
 
-  const excludedGroups = ["color"];
+  const colorOptions = colorVariants.map((variant) => ({
+    id: variant.id,
+    name: variant.name,
+    value: variant.name,
+    color: variant.hex_code || "#999",
+    hex_code: variant.hex_code,
+  }));
 
   const otherVariants = variants.reduce((acc, variant) => {
     const group = variant.group_name?.trim();
 
     if (!group) return acc;
-    if (excludedGroups.includes(group.toLowerCase())) return acc;
+    if (group.toLowerCase() === "color") return acc;
 
-    if (!acc[group]) {
-      acc[group] = [];
-    }
-
+    if (!acc[group]) acc[group] = [];
     acc[group].push(variant);
 
     return acc;
@@ -60,13 +60,14 @@ export default function Details1({ product, selectedVariantId = null }) {
   const colorImageMap = React.useMemo(() => {
     const map = {};
 
-    product.variant_combinations?.forEach((combo) => {
+    product?.variant_combinations?.forEach((combo) => {
       const colorOption = combo.options?.find(
         (option) => option.group_name?.toLowerCase() === "color"
       );
 
       if (colorOption?.id && combo.image_url) {
         if (!map[colorOption.id]) map[colorOption.id] = [];
+
         if (!map[colorOption.id].includes(combo.image_url)) {
           map[colorOption.id].push(combo.image_url);
         }
@@ -74,60 +75,55 @@ export default function Details1({ product, selectedVariantId = null }) {
     });
 
     return map;
-  }, [product.variant_combinations]);
+  }, [product?.variant_combinations]);
 
-useEffect(() => {
-  if (!selectedVariantId || !product?.variant_combinations?.length) return;
+  useEffect(() => {
+    if (!selectedVariantId || !product?.variant_combinations?.length) return;
 
-  const selectedCombo = product.variant_combinations.find((combo) => {
-    const selectedId = String(selectedVariantId);
+    const selectedCombo = product.variant_combinations.find((combo) => {
+      const selectedId = String(selectedVariantId);
 
-    // Case 1: URL has combination ID
-    const comboIdMatch = String(combo.id) === selectedId;
+      const comboIdMatch = String(combo.id) === selectedId;
 
-    // Case 2: URL has color option ID
-    const colorOptionMatch = combo.options?.some(
-      (option) =>
-        String(option.id) === selectedId &&
-        option.group_name?.toLowerCase() === "color"
-    );
+      const optionMatch = combo.options?.some(
+        (option) => String(option.id) === selectedId
+      );
 
-    // Case 3: URL has any variant ID from variant_ids
-    const variantIdMatch = combo.variant_ids
-      ?.map((id) => String(id))
-      .includes(selectedId);
+      const variantIdMatch = combo.variant_ids
+        ?.map((id) => String(id))
+        .includes(selectedId);
 
-    return comboIdMatch || colorOptionMatch || variantIdMatch;
-  });
+      return comboIdMatch || optionMatch || variantIdMatch;
+    });
 
-  if (!selectedCombo) return;
+    if (!selectedCombo) return;
 
-  const selected = {};
+    const selected = {};
 
-  selectedCombo.options?.forEach((option) => {
-    const isColor = option.group_name?.toLowerCase() === "color";
-    const groupKey = isColor ? "color" : option.group_name;
+    selectedCombo.options?.forEach((option) => {
+      const isColor = option.group_name?.toLowerCase() === "color";
+      const groupKey = isColor ? "color" : option.group_name;
 
-    selected[groupKey] = {
-      id: option.id,
-      name: option.name,
-      hex_code: option.hex_code,
-      group_name: option.group_name,
-    };
-
-    if (isColor) {
-      setActiveColor({
+      selected[groupKey] = {
         id: option.id,
         name: option.name,
-        value: option.name,
-        color: option.hex_code || "#999",
         hex_code: option.hex_code,
-      });
-    }
-  });
+        group_name: option.group_name,
+      };
 
-  setSelectedVariants(selected);
-}, [selectedVariantId, product?.variant_combinations]);
+      if (isColor) {
+        setActiveColor({
+          id: option.id,
+          name: option.name,
+          value: option.name,
+          color: option.hex_code || "#999",
+          hex_code: option.hex_code,
+        });
+      }
+    });
+
+    setSelectedVariants(selected);
+  }, [selectedVariantId, product?.variant_combinations]);
 
   const selectedVariantIds = React.useMemo(() => {
     return Object.values(selectedVariants || {})
@@ -136,7 +132,7 @@ useEffect(() => {
   }, [selectedVariants]);
 
   const selectedCombination = React.useMemo(() => {
-    if (!product.variant_combinations?.length) return null;
+    if (!product?.variant_combinations?.length) return null;
 
     return product.variant_combinations.find((combo) => {
       const comboIds = combo.variant_ids?.map((id) => String(id)) || [];
@@ -146,7 +142,7 @@ useEffect(() => {
         selectedVariantIds.every((id) => comboIds.includes(id))
       );
     });
-  }, [product.variant_combinations, selectedVariantIds]);
+  }, [product?.variant_combinations, selectedVariantIds]);
 
   const selectedColorImage = React.useMemo(() => {
     const colorId = selectedVariants?.color?.id;
@@ -160,34 +156,39 @@ useEffect(() => {
     });
 
     return combo?.image_url || null;
-  }, [product.variant_combinations, selectedVariants?.color?.id]);
+  }, [product?.variant_combinations, selectedVariants?.color?.id]);
 
   const currentPrice = Number(
     selectedCombination?.final_price ||
       selectedCombination?.sale_price ||
       selectedCombination?.price ||
-      product.price ||
+      product?.price ||
       0
   );
 
-  const currentStock = Number(selectedCombination?.stock ?? product.stock ?? 0);
+  const currentStock = Number(selectedCombination?.stock ?? product?.stock ?? 0);
 
   const getAvailableOptionsForGroup = (groupName, values) => {
+    /*
+      Important:
+      Do NOT hide options because stock is 0.
+      Product detail should show all configured variant options.
+      Stock validation can be handled on Add to Cart, but dropdowns must remain visible.
+    */
     const selectedExceptCurrentGroup = Object.entries(selectedVariants || {})
       .filter(([group]) => group.toLowerCase() !== groupName.toLowerCase())
       .map(([, variant]) => String(variant.id));
 
     return values.filter((variant) => {
-      return product.variant_combinations?.some((combo) => {
+      if (!product?.variant_combinations?.length) return true;
+
+      return product.variant_combinations.some((combo) => {
         const comboIds = combo.variant_ids?.map((id) => String(id)) || [];
 
-        const hasCurrentVariant = comboIds.includes(String(variant.id));
-
-        const matchesOtherSelected = selectedExceptCurrentGroup.every((id) =>
-          comboIds.includes(id)
+        return (
+          comboIds.includes(String(variant.id)) &&
+          selectedExceptCurrentGroup.every((id) => comboIds.includes(id))
         );
-
-        return hasCurrentVariant && matchesOtherSelected && Number(combo.stock) > 0;
       });
     });
   };
@@ -223,17 +224,17 @@ useEffect(() => {
       }
     };
 
-    addImage(product.image_url);
+    addImage(product?.image_url);
 
-    product.gallery?.forEach((image) => {
+    product?.gallery?.forEach((image) => {
       addImage(image.image_url);
     });
 
-    product.variant_combinations?.forEach((combo) => {
+    product?.variant_combinations?.forEach((combo) => {
       addImage(combo.image_url);
     });
 
-    return images;
+    return images.length ? images : ["/images/default.png"];
   }, [product]);
 
   const validateVariants = () => {
@@ -253,7 +254,7 @@ useEffect(() => {
       }
     }
 
-    if (product.variant_combinations?.length && !selectedCombination) {
+    if (product?.variant_combinations?.length && !selectedCombination) {
       alert("Selected variant combination is not available.");
       return false;
     }
@@ -266,6 +267,27 @@ useEffect(() => {
     price: currentPrice,
     product_variant_combination_id: selectedCombination?.id || null,
     selectedCombination,
+  };
+
+  const handleBuyNow = () => {
+    if (!validateVariants()) return;
+
+    addProductToCart(selectedProductForCart, quantity, false, selectedVariants);
+    router.push("/checkout");
+  };
+
+  const handleWishlist = async () => {
+    if (wishlistLoading) return;
+
+    setWishlistLoading(true);
+
+    try {
+      await addToWishlist(product.id);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setWishlistLoading(false);
+    }
   };
 
   const existingCartItem = cartProducts.find((item) => {
@@ -285,28 +307,6 @@ useEffect(() => {
   const isCurrentItemAdded = Boolean(existingCartItem);
   const displayQuantity = existingCartItem?.quantity || quantity;
 
-  const handleBuyNow = () => {
-    if (!validateVariants()) return;
-
-    addProductToCart(selectedProductForCart, quantity, false, selectedVariants);
-
-    router.push("/checkout");
-  };
-
-  const handleWishlist = async () => {
-    if (wishlistLoading) return;
-
-    setWishlistLoading(true);
-
-    try {
-      await addToWishlist(product.id);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setWishlistLoading(false);
-    }
-  };
-
   return (
     <section className="flat-spacing">
       <div className="tf-main-product section-image-zoom">
@@ -320,14 +320,16 @@ useEffect(() => {
                   activeColor={activeColor}
                   images={activeImages}
                   colorImageMap={colorImageMap}
-                  selectedImageUrl={selectedCombination?.image_url || selectedColorImage}
+                  selectedImageUrl={
+                    selectedCombination?.image_url || selectedColorImage || null
+                  }
                 />
               </div>
             </div>
 
             {/* RIGHT SIDE */}
             <div className="col-md-6">
-              <div className="tf-product-info-wrap position-relative mw-100p-hidden ">
+              <div className="tf-product-info-wrap position-relative mw-100p-hidden">
                 <div className="tf-zoom-main" />
 
                 <div className="tf-product-info-list other-image-zoom">
@@ -354,8 +356,9 @@ useEffect(() => {
                               />
                             ))}
                           </div>
+
                           <div className="text text-caption-1">
-                            {`(${product.reviews_count}) reviews`}
+                            {`(${product.reviews_count || 0}) reviews`}
                           </div>
                         </div>
                       </div>
@@ -373,6 +376,7 @@ useEffect(() => {
                             <div className="compare-at-price font-2">
                               {formatPrice(Number(product.oldPrice || 0))}
                             </div>
+
                             <div className="badges-on-sale text-btn-uppercase">
                               -25%
                             </div>
@@ -385,7 +389,9 @@ useEffect(() => {
                       <div className="tf-product-info-liveview">
                         <i className="icon icon-eye" />
                         <p className="text-caption-1">
-                          <span className="liveview-count">{product.views}</span>{" "}
+                          <span className="liveview-count">
+                            {product.views}
+                          </span>{" "}
                           people are viewing this right now
                         </p>
                       </div>
@@ -394,8 +400,8 @@ useEffect(() => {
 
                   {/* OPTIONS */}
                   <div className="tf-product-info-choose-option">
-                    {/* COLORS ONLY IF EXISTS */}
-                    {colorVariants.length > 0 ? (
+                    {/* COLORS */}
+                    {colorOptions.length > 0 ? (
                       <ColorSelect
                         activeColorId={activeColor?.id}
                         setActiveColor={(colorObj) => {
@@ -405,18 +411,13 @@ useEffect(() => {
                             ...prev,
                             color: {
                               id: colorObj.id,
-                              name: colorObj.name || "",
+                              name: colorObj.name || colorObj.value || "",
                               hex_code: colorObj.color || colorObj.hex_code,
                               group_name: "Color",
                             },
                           }));
                         }}
-                        colorOptions={colorVariants.map((variant) => ({
-                          id: variant.id,
-                          name: variant.name,
-                          value: variant.name,
-                          color: variant.hex_code || "#999",
-                        }))}
+                        colorOptions={colorOptions}
                       />
                     ) : null}
 
@@ -472,7 +473,10 @@ useEffect(() => {
                         quantity={displayQuantity}
                         setQuantity={(qty) => {
                           if (existingCartItem) {
-                            updateQuantity(existingCartItem.cartKey || existingCartItem.id, qty);
+                            updateQuantity(
+                              existingCartItem.cartKey || existingCartItem.id,
+                              qty
+                            );
                           } else {
                             setQuantity(qty);
                           }
@@ -522,7 +526,10 @@ useEffect(() => {
                         </a>
                       </div>
 
-                      <a onClick={handleBuyNow} className="btn-style-3 text-btn-uppercase">
+                      <a
+                        onClick={handleBuyNow}
+                        className="btn-style-3 text-btn-uppercase"
+                      >
                         Buy it now
                       </a>
                     </div>
@@ -538,6 +545,7 @@ useEffect(() => {
                           <div className="icon">
                             <i className="icon-shipping" />
                           </div>
+
                           <p className="text-caption-1">
                             Delivery &amp; Return
                           </p>
@@ -548,6 +556,7 @@ useEffect(() => {
                         <div className="icon">
                           <i className="icon-arrowClockwise" />
                         </div>
+
                         <p className="text-caption-1">
                           Return within <span>45 days</span> of purchase.
                           Duties &amp; taxes are non-refundable.
