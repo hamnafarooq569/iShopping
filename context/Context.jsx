@@ -303,7 +303,10 @@ export default function Context({ children }) {
       if (!product) return;
 
       setQuickViewItemState({
+        ...product,
+
         id: product.id,
+        slug: product.slug,
 
         title: product.title || product.name || "",
 
@@ -320,9 +323,26 @@ export default function Context({ children }) {
           product.image_url ||
           "/images/default.png",
 
+        imgSrc:
+          product.imgSrc ||
+          product.image_url ||
+          product.image ||
+          "/images/default.png",
+
+        imgHover:
+          product.imgHover ||
+          product.imgSrc ||
+          product.image_url ||
+          product.image ||
+          "/images/default.png",
+
         price: Number(product.price || 0),
 
         oldPrice: product.oldPrice ? Number(product.oldPrice) : null,
+
+        colors: product.colors || [],
+        variant_groups: product.variant_groups || [],
+        variant_combinations: product.variant_combinations || [],
       });
     },
 

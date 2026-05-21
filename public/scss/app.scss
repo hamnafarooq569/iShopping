@@ -81,3 +81,104 @@
   color: #000 !important;
   border-color: #111;
 }
+
+
+/* Quick View Image */
+.modal-quick-view .tf-quick-view-image.quick-view-image-area {
+  width: 42.525% !important;
+  flex-shrink: 0 !important;
+}
+
+.modal-quick-view .tf-quick-view-image.quick-view-image-area > .wrap-quick-view {
+  height: 100vh !important;
+  padding: 24px !important;
+  padding-right: 0 !important;
+  overflow: hidden !important;
+  direction: ltr !important;
+}
+
+.modal-quick-view .quick-view-image-box {
+  position: relative !important;
+  width: 100% !important;
+  height: 520px !important;
+  min-height: 520px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #f7f7f7 !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  padding: 24px !important;
+}
+
+.modal-quick-view .quick-view-main-image {
+  object-fit: contain !important;
+  object-position: center !important;
+  padding: 24px !important;
+}
+
+/* Quick View Variant Box */
+.quick-view-variants {
+  margin-top: 22px;
+  margin-bottom: 22px;
+  padding: 18px;
+  border: 1px solid #eeeeee;
+  border-radius: 16px;
+  background: #fafafa;
+}
+
+.quick-view-variants .variant-group {
+  margin-bottom: 16px;
+}
+
+.quick-view-variants .variant-group:last-child {
+  margin-bottom: 0;
+}
+
+.quick-view-variants .variant-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111;
+}
+
+.quick-view-variants .form-select {
+  height: 44px;
+  border-radius: 10px;
+  border: 1px solid #dddddd;
+  font-size: 14px;
+  padding: 8px 14px;
+  background-color: #fff;
+}
+
+.quick-view-variants .form-select:focus {
+  border-color: #111;
+  box-shadow: none;
+}
+
+.quick-view-color-btn {
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  min-height: 28px !important;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  cursor: pointer;
+}
+
+/* Quick View Text */
+.modal-quick-view .tf-product-info-title,
+.modal-quick-view h3,
+.modal-quick-view h4 {
+  font-size: 34px !important;
+  line-height: 1.15 !important;
+  word-break: normal !important;
+}
+
+.modal-quick-view .tf-product-info-desc,
+.modal-quick-view .tf-product-description,
+.modal-quick-view p {
+  font-size: 15px;
+  line-height: 1.6;
+}
