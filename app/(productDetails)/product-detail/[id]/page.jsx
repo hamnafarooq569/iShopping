@@ -21,9 +21,14 @@ export default async function ProductDetailPage({ params, searchParams }) {
 
   try {
     const res = await fetchProductById(id);
+
+    if (!res || !res.data) {
+      return <div className="container py-5">Product not found</div>;
+    }
+
     product = res.data;
 
-    relatedProducts = (res.related_products || []).map((item) => {
+    relatedProducts = (res?.related_products || []).map((item) => {
       const colorMap = new Map();
 
       item.variant_combinations?.forEach((combination) => {

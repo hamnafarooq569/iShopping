@@ -168,16 +168,18 @@ export default function QuickView() {
   return (
     <div className="modal fullRight fade modal-quick-view" id="quickView">
       <div className="modal-dialog">
-        <div className="modal-content">
+        <div className="modal-content quickview-mobile-modal">
           {quickViewItem ? (
             <>
-<Grid5
-  firstItem={displayImage}
-  activeColor={activeColor}
-  setActiveColor={setActiveColor}
-/>
+<div className="quickview-mobile-image">
+  <Grid5
+    firstItem={displayImage}
+    activeColor={activeColor}
+    setActiveColor={setActiveColor}
+  />
+</div>
 
-              <div className="wrap mw-100p-hidden">
+              <div className="wrap quickview-mobile-content">
                 <div className="header">
                   <h5 className="title">Quick View</h5>
 
@@ -331,10 +333,10 @@ export default function QuickView() {
                         onClick={handleAddToCart}
                       >
                         <span>
-                          {productAlreadyInCart ? "Already Added" : "Add to cart -"}
+                          {productAlreadyInCart ? "Already Added" : "Add To Cart"}
                         </span>
 
-                        <span className="tf-qty-price total-price">
+                        <span className="tf-qty-price total-price ms-2">
                           PKR{" "}
                           {productAlreadyInCart
                             ? (currentPrice * shownQuantity).toFixed(2)

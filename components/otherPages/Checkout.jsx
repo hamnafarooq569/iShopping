@@ -395,67 +395,40 @@ export default function Checkout() {
                         />
                       </Link>
 
-                      <div className="content-box">
+<div className="content-box checkout-product-content">
+  <div className="info checkout-product-info">
+    <Link
+      href={`/product-detail/${elm.slug}`}
+      className="name-product link text-title"
+    >
+      {elm.title}
+    </Link>
 
-                        <div className="info">
+    {elm.selectedVariant?.options?.length > 0 && (
+      <div className="text-secondary mt-1 checkout-variant-text">
+        {elm.selectedVariant.options.map((opt, i) => (
+          <span key={i}>
+            {opt.group_name}: {opt.name}
+            {i < elm.selectedVariant.options.length - 1 ? " / " : ""}
+          </span>
+        ))}
+      </div>
+    )}
 
-                          <Link
-                            href={`/product-detail/${elm.slug}`}
-                            className="name-product link text-title"
-                          >
-                            {elm.title}
-                          </Link>
-
-                          {elm.selectedVariant
-                            ?.options?.length >
-                            0 && (
-                            <div className="text-secondary  mt-1">
-
-                              {elm.selectedVariant.options.map(
-                                (opt, i) => (
-                                  <span key={i} className="">
-                                    {opt.group_name}:{" "}
-                                    {opt.name}
-
-                                    {i <
-                                    elm
-                                      .selectedVariant
-                                      .options
-                                      .length -
-                                      1
-                                      ? " / "
-                                      : ""}
-                                  </span>
-                                )
-                              )}
-
-                            </div>
-                          )}
-
-                        </div>
-
-                        <div className="total-price text-button">
-
-                          <span className="count">
-                            {elm.quantity}
-                          </span>{" "}
-                          X
-
-                          <span className="price">
-                            {formatPrice(
-                              (
-                                elm
-                                  .selectedVariant
-                                  ?.final_price ||
-                                elm.price ||
-                                0
-                              ).toFixed(2)
-                            )}
-                          </span>
-
-                        </div>
-
-                      </div>
+    <div className="total-price text-button checkout-item-price">
+      <span className="count">{elm.quantity}</span> X{" "}
+      <span className="price">
+        {formatPrice(
+          (
+            elm.selectedVariant?.final_price ||
+            elm.price ||
+            0
+          ).toFixed(2)
+        )}
+      </span>
+    </div>
+  </div>
+</div>
 
                     </div>
 
